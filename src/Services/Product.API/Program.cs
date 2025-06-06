@@ -1,14 +1,13 @@
+using Common.Logging;
 using Serilog;
 
-Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
-Log.Information("Starting Product API up");
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog(Serilogger.Configure);
+Log.Information(messageTemplate: "Starting Product API...");
 
 try
 {
-	var builder = WebApplication.CreateBuilder(args);
-
-	builder.Host.UseSerilog();
-
 	// Add services to the container.
 
 	builder.Services.AddControllers();
