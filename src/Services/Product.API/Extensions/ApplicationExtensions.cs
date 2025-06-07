@@ -8,7 +8,7 @@
 			app.UseSwaggerUI();
 
 			app.UseRouting();
-			app.UseHttpsRedirection();
+			//	app.UseHttpsRedirection(); For production, consider enabling HTTPS redirection
 
 			app.UseAuthorization();
 			app.UseEndpoints(endpoints =>
