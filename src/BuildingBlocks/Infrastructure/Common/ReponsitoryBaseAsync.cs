@@ -6,93 +6,78 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.Common
 {
-	public class ReponsitoryBaseAsync<T, K, TContext> : IReponsitoryBaseAsync<T, K, TContext> where T : EntityBase<K> where TContext : DbContext
-	{
-		private readonly TContext _context;
-		private readonly IUnitOfWork<TContext> _unitOfWork;
-		public ReponsitoryBaseAsync(TContext context, IUnitOfWork<TContext> unitOfWork)
-		{
-			_context = context ?? throw new ArgumentNullException(nameof(context));
-			_unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-		}
-		public Task<IDbContextTransaction> BeginTransactionAsync()
-		{
-			throw new NotImplementedException();
-		}
+    public class ReponsitoryBaseAsync<T, K, TContext> : IReponsitoryBaseAsync<T, K, TContext> where T : EntityBase<K> where TContext : DbContext
+    {
+        private readonly TContext _context;
+        private readonly IUnitOfWork<TContext> _unitOfWork;
+        public ReponsitoryBaseAsync(TContext context, IUnitOfWork<TContext> unitOfWork)
+        {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        }
+        public Task<IDbContextTransaction> BeginTransactionAsync() => _context.Database.BeginTransactionAsync();
 
-		public Task<K> CreateAsync(T entity)
-		{
-			throw new NotImplementedException();
-		}
+        public async Task<K> CreateAsync(T entity)
+        {
+            await _context.Set<T>().AddAsync(entity);
+            return entity.Id;
+        }
 
-		public Task<IList<K>> CreateListAsync(IEnumerable<T> entities)
-		{
-			throw new NotImplementedException();
-		}
+        public async Task<IList<K>> CreateListAsync(IEnumerable<T> entities)
+        {
+            await _context.Set<T>().AddRangeAsync(entities);
+            return entities.Select(e => e.Id).ToList();
+        }
+        public Task UpdateAsync(T entity)
+        {
+            if (_context.Entry(entity).State == EntityState.Unchanged) return Task.CompletedTask;
+            T exist = _context.Set<T>().Find(entity.Id);
+            _context.Entry(exist).CurrentValues.SetValues(entity);
+            return Task.CompletedTask;
+        }
+        public Task UpdateListAsync(IEnumerable<T> entities) => _context.Set<T>().AddRangeAsync(entities);
+        public Task DeleteAsync(T entity)
+        {
+            _context.Set<T>().Remove(entity);
+            return Task.CompletedTask;
+        }
+        public Task DeleteListAsync(IEnumerable<T> entities)
+        {
+            _context.Set<T>().RemoveRange(entities);
+            return Task.CompletedTask;
+        }
+        public async Task EndTransactionAsync()
+        {
+            await _context.Database.CommitTransactionAsync();
+        }
+        public async Task RollBackTransactionAsync() => await _context.Database.RollbackTransactionAsync();
 
-		public Task DeleteAsync(T entity)
-		{
-			throw new NotImplementedException();
-		}
+        public IQueryable<T> FindAll(bool trackChanges = false) => !trackChanges ? _context.Set<T>().AsNoTracking() : _context.Set<T>();
 
-		public Task DeleteListAsync(IEnumerable<T> entities)
-		{
-			throw new NotImplementedException();
-		}
 
-		public Task EndTransactionAsync()
-		{
-			throw new NotImplementedException();
-		}
+        public IQueryable<T> FindAll(bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties)
+        {
+            var items = FindAll(trackChanges);
+            items = includeProperties.Aggregate(items, (current, includeProperty) => current.Include(includeProperty));
+            return items;
+        }
 
-		public IQueryable<T> FindAll(bool trackChanges = false)
-		{
-			throw new NotImplementedException();
-		}
+        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false) =>
+            !trackChanges ? _context.Set<T>().Where(expression).AsNoTracking() : _context.Set<T>().Where(expression);
 
-		public IQueryable<T> FindAll(bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties)
-		{
-			throw new NotImplementedException();
-		}
 
-		public IQueryable<T> FindByCondition(Expression<Func<T, object>> condition, bool trackChanges = false)
-		{
-			throw new NotImplementedException();
-		}
+        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties)
+        {
+            var items = FindByCondition(expression, trackChanges);
+            items = includeProperties.Aggregate(items, (current, includeProperty) => current.Include(includeProperty));
+            return items;
+        }
 
-		public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties)
-		{
-			throw new NotImplementedException();
-		}
+        public async Task<T?> GetByIdAsync(K id) => await FindByCondition(x => x.Id.Equals(id)).FirstOrDefaultAsync();
 
-		public Task<T?> GetByIdAsync(K id)
-		{
-			throw new NotImplementedException();
-		}
+        public async Task<T?> GetByIdAsync(K id, params Expression<Func<T, object>>[] includeProperties) => await FindByCondition(x => x.Id.Equals(id), trackChanges: false, includeProperties).FirstOrDefaultAsync();
 
-		public Task<T?> GetByIdAsync(K id, params Expression<Func<T, object>>[] includeProperties)
-		{
-			throw new NotImplementedException();
-		}
+        public Task<int> SaveChangeAsync() => _unitOfWork.CommitAsync();
 
-		public Task RollBackTransactionAsync()
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<int> SaveChangeAsync()
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task UpdateAsync(T entity)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task UpdateListAsync(IEnumerable<T> entities)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    }
 }
