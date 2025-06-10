@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.Common
 {
-    public class ReponsitoryBaseAsync<T, K, TContext> : IReponsitoryBaseAsync<T, K, TContext> where T : EntityBase<K> where TContext : DbContext
+    public class RepositoryBaseAsync<T, K, TContext> : IRepositoryBaseAsync<T, K, TContext> where T : EntityBase<K> where TContext : DbContext
     {
         private readonly TContext _context;
         private readonly IUnitOfWork<TContext> _unitOfWork;
-        public ReponsitoryBaseAsync(TContext context, IUnitOfWork<TContext> unitOfWork)
+        public RepositoryBaseAsync(TContext context, IUnitOfWork<TContext> unitOfWork)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Contracts.Common.Interfaces
 {
-	public interface IReponsitoryQueryBase<T, K, TContext> where T : EntityBase<K> where TContext : DbContext
+	public interface IRepositoryQueryBase<T, K, TContext> where T : EntityBase<K> where TContext : DbContext
 	{
 		IQueryable<T> FindAll(bool trackChanges = false);
 		IQueryable<T> FindAll(bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties);
@@ -16,7 +16,7 @@ namespace Contracts.Common.Interfaces
 		Task<T?> GetByIdAsync(K id, params Expression<Func<T, object>>[] includeProperties);
 	}
 
-	public interface IReponsitoryBaseAsync<T, K, TContext> : IReponsitoryQueryBase<T, K, TContext> where T : EntityBase<K> where TContext : DbContext
+	public interface IRepositoryBaseAsync<T, K, TContext> : IRepositoryQueryBase<T, K, TContext> where T : EntityBase<K> where TContext : DbContext
 	{
 		Task<K> CreateAsync(T entity);
 		Task<IList<K>> CreateListAsync(IEnumerable<T> entities);
