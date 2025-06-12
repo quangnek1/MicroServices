@@ -38,7 +38,7 @@ services:
    image: ${DOCKER_REGISTRY-}product-api:${PLATFORM:-linux}-${TAG:-latest}
    build:
     context: .
-    dockerfile: /src/Services/Product.API/Dockerfile
+    dockerfile: Services/Product.API/Dockerfile
 
 #network section
 networks:
