@@ -12,9 +12,12 @@ namespace Customer.API.Repositories
 		{
 		}
 
-		public  Task<Entities.Customer> GetCustomerByUserNameAsync(string userName) =>
+		public Task<Entities.Customer> GetCustomerByUserNameAsync(string userName) =>
 			 FindByCondition(x => x.UserName.Equals(userName)).SingleOrDefaultAsync();
 
 		public async Task<IEnumerable<Entities.Customer>> GetCustomersAsync() => await FindAll().ToListAsync();
+		public Task CreateCustomer(Entities.Customer customer) => CreateAsync(customer);
+		public Task UpdateCustomer(Entities.Customer customer) => UpdateAsync(customer);
+		public Task DeleteCustomer(Entities.Customer customer) => DeleteAsync(customer);
 	}
 }

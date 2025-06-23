@@ -1,5 +1,8 @@
+using AutoMapper;
 using Common.Logging;
 using Contracts.Common.Interfaces;
+using Customer.API;
+using Customer.API.Controllers;
 using Customer.API.Persistence;
 using Customer.API.Repositories;
 using Customer.API.Repositories.Interfaces;
@@ -25,6 +28,7 @@ try
 
 	var conntectionString = builder.Configuration.GetConnectionString(name: "DefaultConnectionString");
 	builder.Services.AddDbContext<CustomerContext>(optionsAction: options => options.UseNpgsql(conntectionString));
+	builder.Services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfile()));
 
 	builder.Services.AddScoped<ICustomerRepository, CustomerRepository>()
 		.AddScoped(serviceType: typeof(IRepositoryBaseAsync<,,>), implementationType: typeof(RepositoryBaseAsync<,,>))
@@ -32,16 +36,8 @@ try
 		.AddScoped<ICustomerServices, CustomerServices>();
 
 	var app = builder.Build();
+	app.MapCustomerAPI();
 
-	app.MapGet(pattern: "/", handler: () => "Welcome to Customer API");
-	app.MapGet(pattern: "/api/customers", 
-		handler: async (ICustomerRepository customerServices) => await customerServices.GetCustomersAsync());
-
-	app.MapGet(pattern: "/api/customers/{userName}",
-	handler: async (string userName, ICustomerRepository customerServices) => await customerServices.GetCustomerByUserNameAsync(userName));
-	//app.MapPost(pattern: "/", handler: () => "Welcome to Customer API");
-	//app.MapPut(pattern: "/", handler: () => "Welcome to Customer API");
-	//app.MapDelete(pattern: "/", handler: () => "Welcome to Customer API");
 
 	// Configure the HTTP request pipeline.
 	if (app.Environment.IsDevelopment())
@@ -50,7 +46,7 @@ try
 		app.UseSwaggerUI();
 	}
 
-	app.UseHttpsRedirection();
+//	app.UseHttpsRedirection();
 
 	app.UseAuthorization();
 
