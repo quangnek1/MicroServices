@@ -82,3 +82,6 @@ docker-compose down
   - dotnet ef migrations add "SampleMigration" -p Ordering.Infrastructure --startup-project Ordering.API --output-dir Persistence/Migrations
   - dotnet ef migrations remove -p Ordering.Infrastructure --startup-project Ordering.API
   - dotnet ef database update -p Ordering.Infrastructure --startup-project Ordering.API
+
+## Git hub Clean 
+https://github.com/jasontaylordev/CleanArchitecture/tree/net6.0
