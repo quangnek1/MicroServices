@@ -1,8 +1,9 @@
 using Common.Logging;
-using Serilog;
+using Ordering.API.Extensions;
+using Ordering.Application;
 using Ordering.Infrastructure;
 using Ordering.Infrastructure.Persistence;
-using Ordering.Application;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +13,10 @@ Log.Information(messageTemplate: "Starting Ordering API...");
 try
 {
 	// Add services to the container.
+	builder.Host.AddAppConfigurations();
+	builder.Services.AddConfigurationSettings(configuration: builder.Configuration);
 	builder.Services.AddApplicationServices();
-	builder.Services.AddInfrastructureServices(builder.Configuration);
+	builder.Services.AddInfrastructureServices(configuration: builder.Configuration);
 	builder.Services.AddControllers();
 	// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 	builder.Services.AddEndpointsApiExplorer();
