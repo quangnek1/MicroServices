@@ -26,7 +26,7 @@ namespace Ordering.Infrastructure
 			services.AddScoped(serviceType: typeof(IUnitOfWork<>), implementationType: typeof(UnitOfWork<>));
 
 			services.AddScoped(serviceType: typeof(ISmtpEmailService), implementationType: typeof(SmtpEmailService));
-
+		//	services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfile()));
 			return services;
 		}
 	}

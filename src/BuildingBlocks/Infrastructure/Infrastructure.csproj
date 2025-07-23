@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="MailKit" Version="3.3.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
 	  <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
   </ItemGroup>
 	

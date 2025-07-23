@@ -2,7 +2,7 @@
 
 namespace Ordering.Application.Common.Exceptions
 {
-	public class ValidationException : Exception
+	public class ValidationException : ApplicationException
 	{
 		public ValidationException() : base(message: "One or more validation failures have occurred")
 		{
