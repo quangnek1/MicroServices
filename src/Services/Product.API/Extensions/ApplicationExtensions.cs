@@ -6,10 +6,10 @@
 		{
 			app.UseSwagger();
 			app.UseSwaggerUI();
-
+			app.UseAuthentication();
 			app.UseRouting();
 			//	app.UseHttpsRedirection(); For production, consider enabling HTTPS redirection
-
+		
 			app.UseAuthorization();
 			app.UseEndpoints(endpoints =>
 			{

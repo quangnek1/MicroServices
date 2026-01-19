@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Product.API.Entities;
 using Product.API.Reponsitories.Interfaces;
@@ -37,6 +38,7 @@ namespace Product.API.Controllers
 			return Ok(result);
 		}
 		[HttpPost]
+		[Authorize]
 		public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto productDto)
 		{
 			var productEntity = await _productRepository.GetProductByNo(productDto.No);
@@ -49,6 +51,7 @@ namespace Product.API.Controllers
 			return Ok(result);
 		}
 		[HttpPut(template: "{id:long}")]
+		[Authorize]
 		public async Task<IActionResult> UpdateProduct([Required] long id, [FromBody] UpdateProductDto productDto)
 		{
 			var product = await _productRepository.GetProduct(id);
@@ -61,13 +64,14 @@ namespace Product.API.Controllers
 			return Ok(result);
 		}
 		[HttpDelete(template: "{id:long}")]
+		[Authorize]
 		public async Task<IActionResult> DeleteProduct([Required] long id)
 		{
 			var product = await _productRepository.GetProduct(id);
 			if (product == null) return NotFound();
 
 			await _productRepository.DeleteProduct(id);
-			await _productRepository.SaveChangeAsync();
+		//	await _productRepository.SaveChangeAsync();
 			return NoContent();
 		}
 		#endregion

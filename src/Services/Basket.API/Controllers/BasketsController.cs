@@ -2,6 +2,7 @@
 using System.Net;
 using AutoMapper;
 using Basket.API.Entities;
+using Basket.API.GrpcServices;
 using Basket.API.Repositories.Interfaces;
 using EventBus.Messages.IntergrationEvents.Events;
 using MassTransit;
@@ -17,23 +18,44 @@ namespace Basket.API.Controllers
 		private readonly IBasketRepository _basketRepository;
 		private readonly IPublishEndpoint _publishEndpoint;
 		private readonly IMapper _mapper;
-		public BasketsController(IBasketRepository basketRepository, IPublishEndpoint publishEndpoint, IMapper mapper)
+		private readonly StockItemGrpcService _stockItemGrpcService;
+		//private readonly CustomerGrpcService _customerGrpcService;
+		public BasketsController(IBasketRepository basketRepository, IPublishEndpoint publishEndpoint,
+			IMapper mapper, StockItemGrpcService stockItemGrpcService/* CustomerGrpcService customerGrpcService*/)
 		{
 			_basketRepository = basketRepository;
 			_publishEndpoint = publishEndpoint;
 			_mapper = mapper;
+			_stockItemGrpcService = stockItemGrpcService;
+			//_customerGrpcService = customerGrpcService;
 		}
 		[HttpGet(template: "{userName}", Name = "GetBasket")]
 		[ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
 		public async Task<ActionResult<Cart>> GetBasketByUserName([Required] string userName)
 		{
 			var result = await _basketRepository.GetBasketByUserName(userName);
+
+			// Communicate with Customer.Grpc and check fullName of Customer
+			//var customerModel = await _customerGrpcService.GetFullName(userName);
+			//result.FullName = customerModel.FullName;
+
 			return Ok(result ?? new Cart());
 		}
 		[HttpPost(Name = "UpdateBasket")]
 		[ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
 		public async Task<ActionResult<Cart>> UpdateBasket([FromBody] Cart cart)
 		{
+			// Communicate with Inventory.Grpc and check quantity avalible of products
+			//foreach (var item in cart.Items)
+			//{
+			//	var stock = await _stockItemGrpcService.GetStock(item.ItemNo);
+			//	item.SetAvailableQuantity(stock.Quantity);
+			//}
+
+			// Communicate with Customer.Grpc and check fullName of Customer
+			//var customerModel = await _customerGrpcService.GetFullName(cart.UserName);
+			//cart.FullName = customerModel.FullName;
+
 			var options = new DistributedCacheEntryOptions()
 				.SetAbsoluteExpiration(DateTime.UtcNow.AddHours(1))
 				.SetSlidingExpiration(TimeSpan.FromMinutes(5));

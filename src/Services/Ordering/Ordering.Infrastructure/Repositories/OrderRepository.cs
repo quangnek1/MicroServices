@@ -18,7 +18,7 @@ namespace Ordering.Infrastructure.Repositories
 		public async Task<IEnumerable<Order>> GetOrdersByUserName(string userName) =>
 		await FindByCondition(expression: x => x.UserName.Equals(userName)).ToListAsync();
 
-		public void CreateOrder(Order order) => CreateAsync(order);
+		public void CreateOrder(Order order) => Create(order);
 
 		public async Task<Order> UpdateOrderAsync(Order order)
 		{
@@ -26,7 +26,7 @@ namespace Ordering.Infrastructure.Repositories
 			return order;
 		}
 
-		public void DeleteOrder(Order order) => DeleteAsync(order);
+		public void DeleteOrder(Order order) => Delete(order);
 
 		public async Task<Order> CreateOrderDemo(Order order)
 		{

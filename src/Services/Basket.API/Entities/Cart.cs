@@ -3,6 +3,7 @@
 	public class Cart
 	{
 		public string UserName { get; set; }
+		public string FullName { get; set; }
 		public List<CartItem> Items { get; set; }
 		public Cart()
 		{

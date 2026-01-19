@@ -1,6 +1,6 @@
 ﻿namespace Contracts.Domains.Interfaces
 {
-	internal interface IAuditable : IDateTracking
+	public interface IAuditable : IDateTracking
 	{
 
 	}

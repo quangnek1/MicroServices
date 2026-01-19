@@ -1,6 +1,4 @@
-﻿using Customer.API.Repositories.Interfaces;
-using Customer.API.Services;
-using Customer.API.Services.Interfaces;
+﻿using Customer.API.Services.Interfaces;
 using Shared.DTOs.Customer;
 
 namespace Customer.API.Controllers
